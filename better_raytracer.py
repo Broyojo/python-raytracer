@@ -1,5 +1,6 @@
-from renderer import Scene, Camera, Sphere, Ray, Material
-from quat import Quat, euler
+from lib import *
+
+
 
 camera = Camera(
     position=Quat(0, 0, 0, 0),
