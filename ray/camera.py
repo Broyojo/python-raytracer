@@ -3,11 +3,13 @@ from ray.geometry import *
 from math import tan, pi
 
 class Camera():
-    def __init__(self, position, direction, canvas_width, canvas_height, distance, fov):
+    def __init__(self, position, direction, canvas_width, canvas_height, distance, fov, t_min, t_max):
         self.position = position
         self.direction = direction.norm()
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
+        self.t_min = t_min
+        self.t_max = t_max
         self.distance = distance
         self.aspect_ratio = canvas_width/canvas_height
         self.fov = fov

@@ -7,36 +7,18 @@ from ray.quat import *
 
 
 class Scene():
-    def __init__(self, camera, objects, lights, background_color, t_min, t_max, max_depth):
+    def __init__(self, camera, objects, lights, background_color, max_depth):
         self.objects = objects
         self.lights = lights
         self.camera = camera
         self.background_color = background_color
-        self.t_min = t_min
-        self.t_max = t_max
         self.max_depth = max_depth
         self.image = np.zeros(  
             (self.camera.canvas_width, self.camera.canvas_height, 3), dtype=np.uint8)
 
     def ray_trace(self, ray):
-        closest_t = self.t_max+1
-        closest_object = 0
-        for object in self.objects:
-            if type(object) == Sphere:
-                t0, t1 = object.get_t(ray)
-
-                if self.t_min <= t0 <= self.t_max and closest_t > t0:
-                    closest_t = t0
-                    closest_object = object
-                
-                if self.t_min <= t1 <= self.t_max and closest_t > t1:
-                    closest_t = t0
-                    closest_object = object
-
-            elif type(object) == Plane:
-                t = object.get_t(ray)
-                closest_t = t
-                closest_object = object
+        
+        closest_object, closest_t = self.calculate_intersection(ray)
 
         intersect = ray.calculate_point(closest_t)
 
@@ -45,6 +27,28 @@ class Scene():
         else:
             return self.background_color
     
+    def calculate_intersection(self, ray):
+        closest_t = self.camera.t_max+1
+        closest_object = 0
+        for object in self.objects:
+            if type(object) == Sphere:
+                t0, t1 = object.get_t(ray)
+
+                if self.camera.t_min <= t0 <= self.camera.t_max and closest_t > t0:
+                    closest_t = t0
+                    closest_object = object
+                
+                if self.camera.t_min <= t1 <= self.camera.t_max and closest_t > t1:
+                    closest_t = t1
+                    closest_object = object
+
+            elif type(object) == Plane:
+                t = object.get_t(ray)
+                closest_t = t
+                closest_object = object
+
+        return closest_object, closest_t
+
     def shade(self, point, normal, vector, specular):
         amount = 0
         distance = 0
@@ -54,12 +58,18 @@ class Scene():
                 amount += light.intensity
             else:
                 if t == PointLight:
-                    distance = light.position - point     
+                    distance = light.position - point
                 else:
                     distance = light.direction   
+                
+                shadowing_object, shadow_distance = self.calculate_intersection(Ray(point, distance))
+                if shadowing_object != 0:
+                    continue
+                
                 nd = normal.dot(distance)
                 if nd > 0:
                     amount += light.intensity * nd / (normal.magnitude() * distance.magnitude())
+
                 if specular != -1:
                     reflection = normal * 2 * normal.dot(distance) - distance
                     rv = reflection.dot(vector)
@@ -68,10 +78,8 @@ class Scene():
 
         return amount
     
-    def to_color(self, q):
-        return [q.x, q.y, q.z]
+    def to_color(self, q): return [q.x, q.y, q.z]
 
-    
     def save_image(self, file_name):
         img = Image.fromarray(self.image, 'RGB')
         img = img.rotate(90)  # because PIL is weird, this is needed
