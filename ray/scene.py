@@ -39,7 +39,11 @@ class Scene():
                 closest_object = object
 
         intersect = ray.calculate_point(closest_t)
-        return closest_object.color * self.shade(intersect, closest_object.get_normal(intersect), ray.direction * -1, closest_object.specular) if closest_object != 0 else self.background_color
+
+        if closest_object != 0:
+            return closest_object.color * self.shade(intersect, closest_object.get_normal(intersect), ray.direction * -1, closest_object.specular)
+        else:
+            return self.background_color
     
     def shade(self, point, normal, vector, specular):
         amount = 0
@@ -57,10 +61,10 @@ class Scene():
                 if nd > 0:
                     amount += light.intensity * nd / (normal.magnitude() * distance.magnitude())
                 if specular != -1:
-                    reflection = normal * normal.dot(distance) * 2 - distance
+                    reflection = normal * 2 * normal.dot(distance) - distance
                     rv = reflection.dot(vector)
                     if rv > 0:
-                        amount += light.intensity*(rv / reflection.magnitude() * vector.magnitude())**specular
+                        amount += light.intensity*(rv / (reflection.magnitude() * vector.magnitude()))**specular
 
         return amount
     

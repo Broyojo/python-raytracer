@@ -4,8 +4,8 @@ from ray.scene import *
 camera = Camera(
     position=Quat(0, 0, 0, 0),
     direction=euler(0, 0, 0),
-    canvas_width=500,
-    canvas_height=500,
+    canvas_width=4000,
+    canvas_height=4000,
     distance=1,
     fov=50
 )
@@ -39,9 +39,8 @@ scene = Scene(
         )
     ],
     lights=[
-      AmbientLight(intensity=0.2),
-      PointLight(intensity=0.6, position=Quat(0, 2, 1, 0)),
-      DirectionalLight(intensity=0.2, direction=Quat(0, 1, 4, 4))  
+      PointLight(intensity=0.9, position=Quat(0, 0, 0, 10)), 
+      AmbientLight(intensity=0.1)
     ],
     background_color=Quat(0, 0, 0, 0),
     t_min=1,
@@ -51,7 +50,8 @@ scene = Scene(
 
 
 def update():
-    scene.objects[1].center.y -= 0.01
+    pass
+    #scene.lights[0].position.z += 0.1
 
 
 
