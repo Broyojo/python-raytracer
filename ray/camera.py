@@ -1,4 +1,5 @@
-from quat import Quat, euler
+from ray.quat import *
+from ray.geometry import *
 from math import tan, pi
 
 class Camera():
@@ -27,10 +28,3 @@ class Camera():
 
         return Quat(0, vx, vy, self.distance)
 
-class Ray():
-    def __init__(self, origin, direction):
-        self.origin = origin
-        self.direction = direction
-
-    def calculate_point(self, t):
-        return self.origin + t * self.direction
