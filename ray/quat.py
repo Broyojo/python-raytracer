@@ -41,11 +41,11 @@ class Quat():
     def dot(self, q):
         return self.w * q.w + self.x * q.x + self.y * q.y + self.z * q.z
 
-    def magnitude(self):
-        return (self.w ** 2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
+    def __abs__(self):
+        return (self.w**2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
 
     def norm(self):
-        m = self.magnitude()
+        m = (self.w**2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
         return Quat(self.w / m, self.x / m, self.y / m, self.z / m)
 
 

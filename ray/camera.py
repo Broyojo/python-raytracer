@@ -29,4 +29,3 @@ class Camera():
         vy = y * (self.viewport_height / self.canvas_height)
 
         return Quat(0, vx, vy, self.distance)
-
