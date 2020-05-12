@@ -7,11 +7,9 @@ class Quat():
         self.y = y
         self.z = z
 
-    def __add__(self, q):
-        return Quat(self.w + q.w, self.x + q.x, self.y + q.y, self.z + q.z)
+    def __add__(self, q):return Quat(self.w + q.w, self.x + q.x, self.y + q.y, self.z + q.z)
 
-    def __sub__(self, q):
-        return Quat(self.w - q.w, self.x - q.x, self.y - q.y, self.z - q.z)
+    def __sub__(self, q): return Quat(self.w - q.w, self.x - q.x, self.y - q.y, self.z - q.z)
 
     def __mul__(self, q):
         if type(q) == Quat:
@@ -35,17 +33,14 @@ class Quat():
         list = [self.w, self.x, self.y, self.z]
         return list[key]
 
-    def conjugate(self):
-        return Quat(self.w, -self.x, -self.y, -self.z)
+    def conjugate(self): return Quat(self.w, -self.x, -self.y, -self.z)
 
-    def dot(self, q):
-        return self.w * q.w + self.x * q.x + self.y * q.y + self.z * q.z
+    def dot(self, q): return self.w * q.w + self.x * q.x + self.y * q.y + self.z * q.z
 
-    def __abs__(self):
-        return (self.w**2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
+    def __abs__(self): return (self.w**2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
 
     def norm(self):
-        m = (self.w**2 + self.x**2 + self.y**2 + self.z**2) ** 0.5
+        m = self.__abs__()
         return Quat(self.w / m, self.x / m, self.y / m, self.z / m)
 
 

@@ -1,6 +1,7 @@
 from ray.quat import *
 from ray.scene import *
 from random import uniform, randint
+import time
 
 camera = Camera(
     position=Quat(0, 0, 0, 0),
@@ -20,25 +21,25 @@ scene = Scene(
             center=Quat(0, 0, -1, 3), 
             radius=1, 
             color=Quat(0, 255, 0, 0), 
-            specular=500
+            reflectivity=0.3
         ),
         Sphere(
             center=Quat(0, 2, 0, 4), 
             radius=1, 
             color=Quat(0, 0, 0, 255),
-            specular=500
+            reflectivity=0.4
         ),
         Sphere(
             center=Quat(0, -2, 0, 4), 
             radius=1, 
             color=Quat(0, 0, 255, 0),
-            specular=10
+            reflectivity=0.2
         ),
         Sphere(
             center=Quat(0, 0, -5001, 0),
             radius=5000,
             color=Quat(0, 255, 255, 0),
-            specular=1000
+            reflectivity=0.5
         )
     ],
     lights=[
@@ -47,12 +48,14 @@ scene = Scene(
         DirectionalLight(intensity=0.2,  direction=Quat(0, 1, 4, 4))
     ],
     background_color=Quat(0, 0, 0, 0),
-    max_depth=1
 )
+
+
 
 def update():
     scene.objects[1].center.z += 0.1
     print('done rendering frame')
 
-    
-scene.render(update, file_name='images/balls.png', n_frames=1, n_samples=10)
+t = time.time()  
+scene.render(update, file_name='images/balls.png', n_frames=1, depth=1)
+print(time.time() - t, "seconds")

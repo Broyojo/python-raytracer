@@ -1,12 +1,12 @@
 from ray.quat import *
+from ray.scene import *
 
 class Ray():
     def __init__(self, origin, direction):
         self.origin = origin
         self.direction = direction
 
-    def calculate_point(self, t):
-        return self.origin + self.direction * t
+    def calculate_point(self, t): return self.origin + self.direction * t
 
 class AmbientLight():
     def __init__(self, intensity):
@@ -22,12 +22,22 @@ class DirectionalLight():
         self.intensity = intensity
         self.direction = direction
 
+class Material():
+    def __init__(self, ray, t, point, normal, attenuation):
+        self.ray = ray
+        self.t = t
+        self.point = point
+        self.normal = normal
+        self.attenuation = attenuation
+        self.scattered = 0
+
+
 class Sphere():
-    def __init__(self, center, radius, color, specular):
+    def __init__(self, center, radius, color, reflectivity):
         self.center = center
         self.radius = radius
         self.color = color
-        self.specular = specular
+        self.reflectivity = reflectivity
 
     def get_t(self, ray):
         oc = ray.origin - self.center
@@ -38,21 +48,6 @@ class Sphere():
             t0 = (-b + (b**2 - 4*a*c)**0.5)/(2*a)
             t1 = (-b - (b**2 - 4*a*c)**0.5)/(2*a)
             return t0, t1
-        else:
-            return -1, -1
+        else: return -1, -1
 
-    def get_normal(self, pos):
-        return (pos - self.center).norm()
-
-class Plane():
-    def __init__(self, point, normal, color):
-        self.point = point
-        self.normal = normal
-        self.color = color
-    
-    def get_t(self, ray):
-        denom = self.normal.dot(self.point)
-        if denom > 1e-6:
-            po = self.point - ray.origin
-            t = po.dot(self.normal) / denom
-            return t >= 0
+    def get_normal(self, pos): return (pos - self.center).norm()
