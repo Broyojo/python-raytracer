@@ -23,21 +23,15 @@ class DirectionalLight():
         self.direction = direction
 
 class Material():
-    def __init__(self, ray, t, point, normal, attenuation):
-        self.ray = ray
-        self.t = t
-        self.point = point
-        self.normal = normal
-        self.attenuation = attenuation
-        self.scattered = 0
-
-
-class Sphere():
-    def __init__(self, center, radius, color, reflectivity):
-        self.center = center
-        self.radius = radius
+    def __init__(self, color, reflectivity):
         self.color = color
         self.reflectivity = reflectivity
+
+class Sphere():
+    def __init__(self, center, radius, material):
+        self.center = center
+        self.radius = radius
+        self.material = material
 
     def get_t(self, ray):
         oc = ray.origin - self.center

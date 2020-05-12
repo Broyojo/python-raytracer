@@ -21,12 +21,13 @@ class Scene():
             intersect = ray.calculate_point(closest_t)
             normal = closest_object.get_normal(intersect)
             direction = ray.direction.conjugate()
-            color = closest_object.color * self.shade(intersect, normal, direction)
-            r = closest_object.reflectivity
-            if depth <= 0 or r <= 0: return color
-            reflection_direction = self.reflect(direction, normal)
-            reflection_color = self.ray_trace(Ray(intersect, reflection_direction), depth-1)
-            return color * (1 - r) + reflection_color * r
+            color = closest_object.material.color * self.shade(intersect, normal, direction)
+            reflectivity = closest_object.material.reflectivity
+            if depth > 0 and reflectivity > 0:
+                reflection_direction = self.reflect(direction, normal)
+                reflection_color = self.ray_trace(Ray(intersect, reflection_direction), depth-1)
+                return color * (1 - reflectivity) + reflection_color * reflectivity
+            else: return color 
         else: return self.background_color
     
     def calculate_intersection(self, ray):
@@ -38,8 +39,7 @@ class Scene():
             if self.constrain(t1, closest_t): closest_t, closest_object = t1, object
         return closest_object, closest_t
     
-    def constrain(self, t, closest_t):
-        return self.camera.t_min <= t <= self.camera.t_max and t < closest_t
+    def constrain(self, t, closest_t): return self.camera.t_min <= t <= self.camera.t_max and t < closest_t
 
     def shade(self, point, normal, vector):
         intensity = 0
@@ -57,18 +57,16 @@ class Scene():
 
     def reflect(self, direction, normal): return normal * 2 * normal.dot(direction) - direction
 
-    def save_image(self, file_name):
-        img = Image.fromarray(self.image, 'RGB')
-        img = img.rotate(90)  # because PIL is weird, this is needed
-        img.save(file_name)
-
     def render(self, update, file_name, n_frames, depth):
-        while n_frames > 0:
-            n_frames -= 1
+        count = 0
+        while count < n_frames:
             for x in range(self.camera.canvas_width):
                 for y in range(self.camera.canvas_height):
                     origin = self.camera.direction * self.camera.translate_coords(x, y)
                     color = self.ray_trace(Ray(origin, (origin - self.camera.position).norm()), depth)
                     self.image[x, y] = [color.x, color.y, color.z]
-            self.save_image(file_name)
+            img = Image.fromarray(self.image, 'RGB')
+            img = img.rotate(90)
+            img.save(file_name + '-' + str(count) + '.png')
             update()
+            count += 1

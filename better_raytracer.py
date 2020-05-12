@@ -20,26 +20,22 @@ scene = Scene(
         Sphere(
             center=Quat(0, 0, -1, 3), 
             radius=1, 
-            color=Quat(0, 255, 0, 0), 
-            reflectivity=0.3
+            material=Material(color=Quat(0, 255, 0, 0), reflectivity=0.3)
         ),
         Sphere(
             center=Quat(0, 2, 0, 4), 
             radius=1, 
-            color=Quat(0, 0, 0, 255),
-            reflectivity=0.4
+            material=Material(color=Quat(0, 0, 0, 255), reflectivity=0.4)
         ),
         Sphere(
             center=Quat(0, -2, 0, 4), 
             radius=1, 
-            color=Quat(0, 0, 255, 0),
-            reflectivity=0.2
+            material=Material(color=Quat(0, 0, 255, 0), reflectivity=0.2)
         ),
         Sphere(
             center=Quat(0, 0, -5001, 0),
             radius=5000,
-            color=Quat(0, 255, 255, 0),
-            reflectivity=0.5
+            material=Material(color=Quat(0, 255, 255, 0), reflectivity=0.5)
         )
     ],
     lights=[
@@ -53,9 +49,9 @@ scene = Scene(
 
 
 def update():
-    scene.objects[1].center.z += 0.1
+    scene.objects[1].center.z += 0.01
     print('done rendering frame')
 
 t = time.time()  
-scene.render(update, file_name='images/balls.png', n_frames=1, depth=1)
+scene.render(update, file_name='images/video1/balls', n_frames=1, depth=10)
 print(time.time() - t, "seconds")
