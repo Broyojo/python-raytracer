@@ -1,9 +1,21 @@
-from ray.quat import *
-from ray.geometry import *
-from math import tan, pi
+from math import pi, tan
 
-class Camera():
-    def __init__(self, position, direction, canvas_width, canvas_height, distance, fov, t_min, t_max):
+from ray.geometry import *
+from ray.quat import *
+
+
+class Camera:
+    def __init__(
+        self,
+        position,
+        direction,
+        canvas_width,
+        canvas_height,
+        distance,
+        fov,
+        t_min,
+        t_max,
+    ):
         self.position = position
         self.direction = direction.norm()
         self.canvas_width = canvas_width
@@ -11,7 +23,7 @@ class Camera():
         self.t_min = t_min
         self.t_max = t_max
         self.distance = distance
-        self.aspect_ratio = canvas_width/canvas_height
+        self.aspect_ratio = canvas_width / canvas_height
         self.fov = fov
         self.viewport_width = tan(self.fov * pi / 180)
         self.viewport_height = self.viewport_width * self.aspect_ratio
